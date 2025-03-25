@@ -1,9 +1,9 @@
 import React from "react";
-import { Text, View, StyleSheet, TouchableOpacity, Image } from "react-native";
+import { Text, View, StyleSheet, TouchableOpacity, Image, Linking } from "react-native";
 import { Link } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
-import AttendanceCard from '../components/AttendanceCard';
+
 
 const colors = {
   primary: '#4A90E2',
@@ -62,11 +62,13 @@ export default function Index() {
             <StatusBar style="dark" />
             <View style={styles.headerContainer}>
                 <View style={styles.logoContainer}>
-                    <Image
-                        source={require('../assets/college-logo.jpeg')}
-                        style={styles.logo}
-                        resizeMode="contain"
-                    />
+                    <TouchableOpacity onPress={() => Linking.openURL('https://www.jiscollege.ac.in/')}>
+                        <Image
+                            source={require('../assets/college-logo.jpeg')}
+                            style={styles.logo}
+                            resizeMode="contain"
+                        />
+                    </TouchableOpacity>
                     <View style={styles.titleContainer}>
                         <Text style={styles.appName}>College Companion</Text>
                         <Text style={styles.tagline}>Your Academic Assistant</Text>
@@ -166,3 +168,5 @@ const styles = StyleSheet.create({
         color: colors.textPrimary,
     },
 });
+
+

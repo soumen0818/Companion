@@ -2,23 +2,72 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Platform } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import AttendanceCard from '../components/Attendancecard';
 
 export default function AttendanceScreen() {
   const router = useRouter();
   const subjects = [
-    { name: 'Data Structures', present: 32, total: 36, percentage: 88.9 },
-    { name: 'Database Systems', present: 28, total: 34, percentage: 82.4 },
-    { name: 'Computer Networks', present: 30, total: 35, percentage: 85.7 },
-    { name: 'Operating Systems', present: 33, total: 36, percentage: 91.7 },
+    {
+      name: 'Data Structures',
+      present: 32,
+      total: 36,
+      percentage: 88.9,
+      classes: [
+        { date: '2023-10-01', status: 'Present' },
+        { date: '2023-10-02', status: 'Absent' },
+        { date: '2023-10-03', status: 'Present' },
+        { date: '2023-10-04', status: 'Present' },
+      ],
+    },
+    {
+      name: 'Database Systems',
+      present: 28,
+      total: 34,
+      percentage: 82.4,
+      classes: [
+        { date: '2023-10-01', status: 'Present' },
+        { date: '2023-10-02', status: 'Present' },
+        { date: '2023-10-03', status: 'Absent' },
+        { date: '2023-10-04', status: 'Present' },
+      ],
+    },
+    {
+      name: 'Computer Networks',
+      present: 30,
+      total: 35,
+      percentage: 85.7,
+      classes: [
+        { date: '2023-10-01', status: 'Absent' },
+        { date: '2023-10-02', status: 'Present' },
+        { date: '2023-10-03', status: 'Present' },
+        { date: '2023-10-04', status: 'Present' },
+      ],
+    },
+    {
+      name: 'Operating Systems',
+      present: 33,
+      total: 36,
+      percentage: 91.7,
+      classes: [
+        { date: '2023-10-01', status: 'Present' },
+        { date: '2023-10-02', status: 'Present' },
+        { date: '2023-10-03', status: 'Present' },
+        { date: '2023-10-04', status: 'Absent' },
+      ],
+    },
   ];
+
+  const handleSubjectClick = (subject) => {
+    router.push({
+      pathname: '/attendance/details',
+      params: { subject: JSON.stringify(subject) },
+    });
+  };
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity 
-          onPress={() => router.back()}
-          style={styles.backButton}
-        >
+        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
           <MaterialIcons name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Attendance Overview</Text>
@@ -28,34 +77,18 @@ export default function AttendanceScreen() {
         </View>
       </View>
 
-      <ScrollView 
+      <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollViewContent}
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.subjectsContainer}>
           {subjects.map((subject, index) => (
-            <View key={index} style={styles.subjectCard}>
-              <View style={styles.subjectHeader}>
-                <Text style={styles.subjectName}>{subject.name}</Text>
-                <MaterialIcons 
-                  name={subject.percentage >= 75 ? 'check-circle' : 'warning'} 
-                  size={24} 
-                  color={subject.percentage >= 75 ? '#4CAF50' : '#FF9800'} 
-                />
-              </View>
-              <View style={styles.progressContainer}>
-                <Text style={styles.progressText}>
-                  {subject.present}/{subject.total} Classes
-                </Text>
-                <Text style={[
-                  styles.percentageText,
-                  { color: subject.percentage >= 75 ? '#4CAF50' : '#FF9800' }
-                ]}>
-                  {subject.percentage.toFixed(1)}%
-                </Text>
-              </View>
-            </View>
+            <AttendanceCard
+              key={index}
+              subject={subject}
+              onPress={() => handleSubjectClick(subject)}
+            />
           ))}
         </View>
       </ScrollView>

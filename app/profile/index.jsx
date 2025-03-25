@@ -12,11 +12,11 @@ import { MaterialIcons } from '@expo/vector-icons';
 
 const Profile = () => {
     const studentInfo = {
-        name: 'John Doe',
+        name: 'Suman Pradhan',
         rollNumber: '21CS123',
         branch: 'Computer Science',
         semester: '4th Semester',
-        email: 'john.doe@example.com',
+        email: 'suman.doe@example.com',
         phone: '+91 9876543210',
         attendance: '85%',
         cgpa: '8.5'
