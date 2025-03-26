@@ -12,6 +12,13 @@ import {
 import { MaterialIcons } from '@expo/vector-icons';
 
 export default function AttendanceModal({ visible, onClose, classInfo }) {
+    const [currentDate] = useState(new Date().toLocaleDateString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    }));
+
     const [students, setStudents] = useState([
         { id: 1, name: "Arun Kumar", rollNo: "21CS001", status: "present" },
         { id: 2, name: "Priya Singh", rollNo: "21CS002", status: "present" },
@@ -66,7 +73,10 @@ export default function AttendanceModal({ visible, onClose, classInfo }) {
                         <TouchableOpacity onPress={onClose} style={styles.closeButton}>
                             <MaterialIcons name="close" size={24} color="#333" />
                         </TouchableOpacity>
-                        <Text style={styles.modalTitle}>Take Attendance</Text>
+                        <View style={styles.headerContent}>
+                            <Text style={styles.modalTitle}>Take Attendance</Text>
+                            <Text style={styles.modalSubtitle}>{classInfo?.class}</Text>
+                        </View>
                     </View>
 
                     <View style={styles.classInfo}>
@@ -74,6 +84,10 @@ export default function AttendanceModal({ visible, onClose, classInfo }) {
                         <Text style={styles.classDetails}>
                             {classInfo?.class} • {classInfo?.room}
                         </Text>
+                        <View style={styles.dateContainer}>
+                            <MaterialIcons name="event" size={16} color="#4A90E2" />
+                            <Text style={styles.dateText}>{currentDate}</Text>
+                        </View>
                         <Text style={styles.timeText}>{classInfo?.time}</Text>
                     </View>
 
@@ -133,7 +147,7 @@ export default function AttendanceModal({ visible, onClose, classInfo }) {
 
 const styles = StyleSheet.create({
     modalContainer: {
-        flex: 1,
+        flex: 2,
         backgroundColor: 'rgba(0,0,0,0.5)',
         justifyContent: 'flex-end',
     },
@@ -154,15 +168,26 @@ const styles = StyleSheet.create({
         top: 20,
         right: 20,
     },
+    headerContent: {
+        alignItems: 'center',
+    },
     modalTitle: {
         fontSize: 20,
         fontWeight: 'bold',
         color: '#333',
+        marginBottom: 4,
+    },
+    modalSubtitle: {
+        fontSize: 14,
+        color: '#666',
+        fontWeight: '500',
     },
     classInfo: {
         padding: 20,
         backgroundColor: '#f8f9fa',
         alignItems: 'center',
+        borderBottomWidth: 1,
+        borderBottomColor: '#eee',
     },
     subjectName: {
         fontSize: 18,
@@ -251,5 +276,20 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 16,
         fontWeight: '600',
-    }
+    },
+    dateContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: 8,
+        backgroundColor: '#E3F2FD',
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 15,
+    },
+    dateText: {
+        fontSize: 14,
+        color: '#4A90E2',
+        marginLeft: 6,
+        fontWeight: '500',
+    },
 });

@@ -6,14 +6,23 @@ import {
     ScrollView, 
     TouchableOpacity,
     Platform,
-    Image 
+    Image,
+    Dimensions 
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import AttendanceModal from './components/AttendanceModal';
+// eslint-disable-next-line no-unused-vars
+import StudentReports from './components/Studentfeedback';
 import { useRouter } from "expo-router";
+import { LinearGradient } from 'expo-linear-gradient';
+import { useFeedback } from '../../context/FeedbackContext';
+
+const { width } = Dimensions.get('window');
+const cardWidth = width - 5; // Full width minus padding
 
 export default function TeacherDashboard() {
     const router = useRouter();
+    const { setFeedbackData } = useFeedback();
     
     // Add this to handle logout
     const handleLogout = () => {
@@ -26,7 +35,7 @@ export default function TeacherDashboard() {
     const [selectedClass, setSelectedClass] = useState(null);
 
     const teacherInfo = {
-        name: "Dr. Amit Kumar",
+        name: "Dr. Tejas Edwards",
         department: "Computer Science",
         designation: "Associate Professor",
         expertise: "Data Structures & Algorithms"
@@ -62,7 +71,7 @@ export default function TeacherDashboard() {
             class: "B.Tech CSE 3rd Year",
             subject: "Data Structures",
             rating: 4.5,
-            comment: "Excellent teaching methodology, very helpful in understanding complex concepts.",
+            comment: "Excellent teaching methodology.",
             date: "2024-03-25"
         },
         {
@@ -90,64 +99,143 @@ export default function TeacherDashboard() {
         return stars;
     };
 
+    const handleStudentReports = () => {
+        try {
+            setFeedbackData(studentFeedback);
+            router.push("/teacher/components/Studentfeedback");
+        } catch (error) {
+            console.error("Error navigating to student reports:", error);
+        }
+    };
+
+    const quickActions = [
+        {
+            title: 'Take Attendance',
+            icon: 'how-to-reg',
+            color: '#4CAF50',
+            backgroundColor: '#E8F5E9',
+            onPress: () => setShowAttendance(true)
+        },
+        {
+            title: 'Upload Notes',
+            icon: 'upload-file',
+            color: '#2196F3',
+            backgroundColor: '#E3F2FD',
+            onPress: () => router.push('/teacher/notes')
+        },
+        {
+            title: 'Assignments',
+            icon: 'assignment',
+            color: '#FFC107',
+            backgroundColor: '#FFF8E1',
+            onPress: () => router.push('/teacher/assignments')
+        },
+        {
+            title: 'Student Reports',
+            icon: 'analytics',
+            color: '#9C27B0',
+            backgroundColor: '#F3E5F5',
+            onPress: handleStudentReports
+        }
+    ];
+
+    const statsCards = [
+        {
+            title: 'Students',
+            count: '156',
+            icon: 'people',
+            color: '#4CAF50',
+            backgroundColor: '#E8F5E9'
+        },
+        {
+            title: 'Classes',
+            count: '4',
+            icon: 'class',
+            color: '#2196F3',
+            backgroundColor: '#E3F2FD'
+        },
+        {
+            title: 'Assignments',
+            count: '12',
+            icon: 'assignment',
+            color: '#FF9800',
+            backgroundColor: '#FFF3E0'
+        }
+    ];
+
     return (
-        <>
-            <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-                {/* Header Section */}
-                <View style={styles.header}>
-                    <View style={styles.profileSection}>
-                        <View style={styles.avatarContainer}>
-                            <MaterialIcons name="person" size={40} color="#fff" />
-                        </View>
-                        <View style={styles.profileInfo}>
+        <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+            <LinearGradient
+                colors={['#1a237e', '#283593']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.header}
+            >
+                <View style={styles.headerContent}>
+                    <View style={styles.profileInfo}>
+                        <Image
+                            source={{ uri: 'https://ui-avatars.com/api/?name=Teacher&background=ffffff&color=1a237e&bold=true' }}
+                            style={styles.avatar}
+                        />
+                        <View style={styles.textContainer}>
                             <Text style={styles.name}>{teacherInfo.name}</Text>
-                            <Text style={styles.designation}>{teacherInfo.designation}</Text>
+                            <Text style={styles.role}>{teacherInfo.designation}</Text>
                             <View style={styles.departmentBadge}>
                                 <MaterialIcons name="school" size={16} color="#fff" />
-                                <Text style={styles.department}>{teacherInfo.department}</Text>
+                                <Text style={styles.departmentText}>{teacherInfo.department}</Text>
                             </View>
                         </View>
                     </View>
                 </View>
+            </LinearGradient>
 
-                {/* Stats Section */}
-                <View style={styles.statsContainer}>
-                    <View style={styles.statsRow}>
-                        <View style={[styles.statCard, { backgroundColor: '#E8F5FE' }]}>
-                            <MaterialIcons name="people" size={24} color="#4A90E2" />
-                            <Text style={[styles.statValue, { color: '#4A90E2' }]}>125</Text>
-                            <Text style={styles.statLabel}>Total Students</Text>
+            <View style={styles.content}>
+                {/* Quick Stats */}
+                <View style={styles.statsGrid}>
+                    {statsCards.map((stat, index) => (
+                        <View 
+                            key={index} 
+                            style={[styles.statsCard, { backgroundColor: stat.backgroundColor }]}
+                        >
+                            <View style={[styles.iconContainer, { backgroundColor: stat.color }]}>
+                                <MaterialIcons name={stat.icon} size={24} color="#fff" />
+                            </View>
+                            <Text style={styles.statsCount}>{stat.count}</Text>
+                            <Text style={styles.statsTitle}>{stat.title}</Text>
                         </View>
-                        <View style={[styles.statCard, { backgroundColor: '#FEF5E7' }]}>
-                            <MaterialIcons name="today" size={24} color="#F39C12" />
-                            <Text style={[styles.statValue, { color: '#F39C12' }]}>3</Text>
-                            <Text style={styles.statLabel}>Today's Classes</Text>
-                        </View>
-                    </View>
-                    <View style={styles.statsRow}>
-                        <Text style={styles.dateText}>{selectedDate.toDateString()}</Text>
-                    </View>
+                    ))}
                 </View>
 
-                {/* Today's Schedule Section */}
-                <View style={styles.section}>
-                    <View style={styles.sectionHeader}>
-                        <Text style={styles.sectionTitle}>Today's Schedule</Text>
-                        <TouchableOpacity>
-                            <Text style={styles.seeAllText}>View All</Text>
+                {/* Quick Actions */}
+                <Text style={styles.sectionTitle}>Quick Actions</Text>
+                <View style={styles.quickActions}>
+                    {quickActions.map((action, index) => (
+                        <TouchableOpacity
+                            key={index}
+                            style={[styles.actionCard, { backgroundColor: action.backgroundColor }]}
+                            onPress={action.onPress}
+                        >
+                            <View style={[styles.iconCircle, { backgroundColor: action.color }]}>
+                                <MaterialIcons name={action.icon} size={24} color="#fff" />
+                            </View>
+                            <Text style={styles.actionText}>{action.title}</Text>
                         </TouchableOpacity>
-                    </View>
+                    ))}
+                </View>
 
+                {/* Today's Schedule */}
+                <View style={styles.scheduleSection}>
+                    <Text style={styles.sectionTitle}>Today's Schedule</Text>
                     {todayClasses.map((classInfo, index) => (
-                        <View key={index} style={styles.classCard}>
-                            <View style={styles.classTimeStrip}>
-                                <MaterialIcons name="access-time" size={20} color="#4A90E2" />
-                                <Text style={styles.classTime}>{classInfo.time}</Text>
+                        <View key={index} style={styles.scheduleCard}>
+                            <View style={styles.timeContainer}>
+                                <Text style={styles.timeText}>{classInfo.time.split(' - ')[0]}</Text>
+                                <Text style={styles.timePeriod}>{classInfo.time.split(' ')[1]}</Text>
                             </View>
-                            <View style={styles.classInfo}>
+                            <View style={styles.classDetails}>
                                 <Text style={styles.subjectName}>{classInfo.subject}</Text>
                                 <Text style={styles.className}>{classInfo.class}</Text>
-                                <View style={styles.classDetails}>
+                                <View style={styles.detailRow}>
                                     <View style={styles.detailItem}>
                                         <MaterialIcons name="room" size={16} color="#666" />
                                         <Text style={styles.detailText}>{classInfo.room}</Text>
@@ -162,288 +250,272 @@ export default function TeacherDashboard() {
                                 style={styles.attendanceButton}
                                 onPress={() => setShowAttendance(true)}
                             >
-                                <MaterialIcons name="edit" size={20} color="#fff" />
-                                <Text style={styles.attendanceButtonText}>Take Attendance</Text>
+                                <MaterialIcons name="edit" size={20} color="#1a237e" />
                             </TouchableOpacity>
                         </View>
                     ))}
                 </View>
-
-                {/* Recent Feedback Section */}
-                <View style={styles.section}>
-                    <View style={styles.sectionHeader}>
-                        <Text style={styles.sectionTitle}>Recent Feedback</Text>
-                        <TouchableOpacity>
-                            <Text style={styles.seeAllText}>View All</Text>
-                        </TouchableOpacity>
-                    </View>
-
+                {/* Student Feedback Section */}
+                <View style={styles.scheduleSection}>
+                    <Text style={styles.sectionTitle}>Recent Student Feedback</Text>
                     {studentFeedback.map((feedback, index) => (
-                        <View key={index} style={styles.feedbackCard}>
-                            <View style={styles.feedbackHeader}>
-                                <View>
-                                    <Text style={styles.studentName}>{feedback.student}</Text>
-                                    <Text style={styles.feedbackClass}>{feedback.class}</Text>
-                                </View>
-                                <View style={styles.ratingContainer}>
-                                    <View style={styles.stars}>
+                        <View key={index} style={styles.scheduleCard}>
+                            <View style={styles.classDetails}>
+                                <Text style={styles.subjectName}>{feedback.student}</Text>
+                                <Text style={styles.className}>{feedback.subject}</Text>
+                                <View style={styles.detailRow}>
+                                    <View style={styles.detailItem}>
                                         {renderStars(feedback.rating)}
                                     </View>
-                                    <Text style={styles.ratingText}>{feedback.rating}</Text>
                                 </View>
-                            </View>
-                            <Text style={styles.feedbackText}>{feedback.comment}</Text>
-                            <View style={styles.feedbackFooter}>
-                                <Text style={styles.feedbackDate}>{feedback.date}</Text>
-                                <Text style={styles.feedbackSubject}>{feedback.subject}</Text>
+                                <Text style={styles.detailText}>{feedback.comment}</Text>
                             </View>
                         </View>
                     ))}
                 </View>
-
-                {/* Quick Actions Section */}
-                <View style={styles.quickActions}>
-                    <TouchableOpacity 
-                        style={[styles.actionButton, { backgroundColor: '#4A90E2' }]}
-                        onPress={() => router.push('/teacher/assignment')}
-                    >
-                        <MaterialIcons name="assignment" size={22} color="#fff" />
-                        <Text style={styles.buttonText}>Assignment</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={[styles.actionButton, { backgroundColor: '#27AE60' }]}>
-                        <MaterialIcons name="grade" size={22} color="#fff" />
-                        <Text style={styles.buttonText}>Grades</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={[styles.actionButton, { backgroundColor: '#E74C3C' }]}>
-                        <MaterialIcons name="announcement" size={22} color="#fff" />
-                        <Text style={styles.buttonText}>Notices</Text>
-                    </TouchableOpacity>
-                </View>
-            </ScrollView>
+            </View>
 
             <AttendanceModal 
                 visible={showAttendance}
                 onClose={() => setShowAttendance(false)}
                 classInfo={selectedClass}
             />
-        </>
+        </ScrollView>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: '#f5f6fa',
     },
     header: {
-        padding: 20,
-        backgroundColor: '#4A90E2',
-        borderBottomLeftRadius: 20,
-        borderBottomRightRadius: 20,
+        paddingTop: Platform.OS === 'ios' ? 60 : 40,
+        paddingBottom: 30,
+        borderBottomLeftRadius: 30,
+        borderBottomRightRadius: 30,
     },
-    profileSection: {
+    headerContent: {
+        paddingHorizontal: 20,
+    },
+    profileInfo: {
         flexDirection: 'row',
         alignItems: 'center',
     },
-    avatarContainer: {
-        width: 60,
-        height: 60,
-        borderRadius: 30,
-        backgroundColor: '#fff',
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginRight: 15,
+    avatar: {
+        width: 80,
+        height: 80,
+        borderRadius: 40,
+        borderWidth: 3,
+        borderColor: '#fff',
     },
-    profileInfo: {
+    textContainer: {
+        marginLeft: 15,
         flex: 1,
     },
     name: {
-        fontSize: 18,
+        fontSize: 24,
         fontWeight: 'bold',
         color: '#fff',
+        marginBottom: 4,
     },
-    designation: {
-        fontSize: 14,
+    role: {
+        fontSize: 16,
         color: '#fff',
-        marginTop: 5,
+        opacity: 0.9,
+        marginBottom: 8,
     },
     departmentBadge: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginTop: 5,
+        backgroundColor: 'rgba(255,255,255,0.2)',
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 20,
+        alignSelf: 'flex-start',
     },
-    department: {
-        fontSize: 12,
+    departmentText: {
         color: '#fff',
-        marginLeft: 5,
+        marginLeft: 6,
+        fontSize: 14,
     },
-    statsContainer: {
+    content: {
         padding: 20,
     },
-    statsRow: {
+    statsGrid: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginBottom: 20,
+        marginTop: -30,
     },
-    statCard: {
-        flex: 1,
+    statsCard: {
+        width: (cardWidth - 32) / 3, // Divide available space by 3 for equal width cards
+        aspectRatio: 0.9, // Makes cards slightly taller than wide
+        borderRadius: 16,
+        padding: 12,
         alignItems: 'center',
-        padding: 20,
-        borderRadius: 10,
+        justifyContent: 'center',
+        ...Platform.select({
+            ios: {
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.1,
+                shadowRadius: 8,
+            },
+            android: {
+                elevation: 4,
+            },
+        }),
     },
-    statValue: {
+    iconContainer: {
+        width: 44,
+        height: 44,
+        borderRadius: 22,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: 12,
+    },
+    statsCount: {
         fontSize: 24,
         fontWeight: 'bold',
-        marginTop: 10,
+        color: '#1a237e',
+        marginBottom: 4,
     },
-    statLabel: {
+    statsTitle: {
         fontSize: 14,
         color: '#666',
-        marginTop: 5,
-    },
-    dateText: {
-        fontSize: 16,
-        color: '#666',
-    },
-    section: {
-        padding: 20,
-    },
-    sectionHeader: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 20,
+        textAlign: 'center',
     },
     sectionTitle: {
-        fontSize: 18,
+        fontSize: 20,
         fontWeight: 'bold',
+        color: '#1a237e',
+        marginBottom: 15,
+        marginTop: 20,
     },
-    seeAllText: {
-        fontSize: 14,
-        color: '#4A90E2',
+    quickActions: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'space-between',
     },
-    classCard: {
+    actionCard: {
+        width: '48%',
+        padding: 20,
+        borderRadius: 15,
+        marginBottom: 15,
+        ...Platform.select({
+            ios: {
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.1,
+                shadowRadius: 4,
+            },
+            android: {
+                elevation: 2,
+            },
+        }),
+    },
+    iconCircle: {
+        width: 48,
+        height: 48,
+        borderRadius: 24,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 12,
+    },
+    actionText: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: '#1a237e',
+    },
+    scheduleSection: {
+        marginTop: 20,
+    },
+    scheduleCard: {
+        backgroundColor: '#fff',
+        borderRadius: 15,
+        padding: 15,
+        marginBottom: 15,
         flexDirection: 'row',
         alignItems: 'center',
-        padding: 15,
-        backgroundColor: '#F9F9F9',
-        borderRadius: 10,
-        marginBottom: 15,
+        ...Platform.select({
+            ios: {
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.1,
+                shadowRadius: 4,
+            },
+            android: {
+                elevation: 2,
+            },
+        }),
     },
-    classTimeStrip: {
+    timeContainer: {
         width: 80,
         alignItems: 'center',
+        borderRightWidth: 1,
+        borderRightColor: '#eee',
+        paddingRight: 15,
     },
-    classTime: {
-        fontSize: 14,
+    timeText: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#1a237e',
+    },
+    timePeriod: {
+        fontSize: 12,
         color: '#666',
-        marginTop: 5,
+        marginTop: 4,
     },
-    classInfo: {
+    classDetails: {
         flex: 1,
+        paddingLeft: 15,
     },
     subjectName: {
         fontSize: 16,
         fontWeight: 'bold',
+        color: '#1a237e',
+        marginBottom: 4,
     },
     className: {
         fontSize: 14,
         color: '#666',
-        marginTop: 5,
+        marginBottom: 8,
     },
-    classDetails: {
+    detailRow: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginTop: 10,
     },
     detailItem: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginRight: 15,
+        marginRight: 20,
     },
     detailText: {
         fontSize: 12,
         color: '#666',
-        marginLeft: 5,
+        marginLeft: 4,
     },
     attendanceButton: {
-        padding: 10,
-        backgroundColor: '#4A90E2',
-        borderRadius: 10,
-        alignItems: 'center',
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        backgroundColor: '#E3F2FD',
         justifyContent: 'center',
+        alignItems: 'center',
     },
-    attendanceButtonText: {
+    expertiseBadge: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: 'rgba(255,255,255,0.2)',
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 20,
+        alignSelf: 'flex-start',
+        marginTop: 8,
+    },
+    expertiseText: {
         color: '#fff',
+        marginLeft: 6,
         fontSize: 14,
-        fontWeight: 'bold',
-        marginLeft: 5,
-    },
-    feedbackCard: {
-        padding: 15,
-        backgroundColor: '#F9F9F9',
-        borderRadius: 10,
-        marginBottom: 15,
-    },
-    feedbackHeader: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 10,
-    },
-    studentName: {
-        fontSize: 16,
-        fontWeight: 'bold',
-    },
-    feedbackClass: {
-        fontSize: 14,
-        color: '#666',
-        marginTop: 5,
-    },
-    ratingContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    stars: {
-        flexDirection: 'row',
-        marginRight: 5,
-    },
-    ratingText: {
-        fontSize: 14,
-        color: '#666',
-    },
-    feedbackText: {
-        fontSize: 14,
-        color: '#666',
-        marginBottom: 10,
-    },
-    feedbackFooter: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-    },
-    feedbackDate: {
-        fontSize: 12,
-        color: '#666',
-    },
-    feedbackSubject: {
-        fontSize: 12,
-        color: '#666',
-    },
-    quickActions: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        padding: 20,
-    },
-    actionButton: {
-        flex: 1,
-        alignItems: 'center',
-        padding: 15,
-        borderRadius: 10,
-        marginHorizontal: 5,
-    },
-    buttonText: {
-        color: '#fff',
-        marginTop: 5,
     },
 });

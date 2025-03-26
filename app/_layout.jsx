@@ -4,6 +4,7 @@ import BottomNav from '../components/BottomNav';
 import { useEffect } from 'react';
 import { useFonts } from 'expo-font';
 import { AuthProvider, useAuth } from '../context/auth';
+import { FeedbackProvider } from '../context/FeedbackContext';
 
 // Export RootLayoutNav so it can be used elsewhere
 export function RootLayoutNav() {
@@ -45,13 +46,37 @@ export function RootLayoutNav() {
             {/* ...other screen configurations... */}
           </>
         ) : user.role === 'teacher' ? (
-          <Stack.Screen
-            name="teacher"
-            options={{
-              headerShown: false,
-              gestureEnabled: false,
-            }}
-          />
+          <>
+            <Stack.Screen
+              name="teacher"
+              options={{
+                headerShown: false,
+                gestureEnabled: false,
+              }}
+            />
+            <Stack.Screen
+              name="teacher/components/Studentfeedback"
+              options={{
+                headerShown: false,
+                animation: 'slide_from_right',
+              }}
+            />
+            // Add this Screen inside your Stack.Navigator
+            <Stack.Screen
+              name="teacher/components/Studentfeedback"
+              options={{
+                headerShown: false,
+                animation: 'slide_from_right',
+              }}
+            />
+            <Stack.Screen
+              name="teacher/components/assignments"
+              options={{
+                headerShown: false,
+                animation: 'slide_from_right',
+              }}
+            />
+          </>
         ) : (
           <Stack.Screen
             name="parent"
@@ -74,9 +99,11 @@ export function RootLayoutNav() {
 
 export default function Layout() {
   return (
-    <AuthProvider>
-      <RootLayoutNav />
-    </AuthProvider>
+    <FeedbackProvider>
+      <AuthProvider>
+        <RootLayoutNav />
+      </AuthProvider>
+    </FeedbackProvider>
   );
 }
 
