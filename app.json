@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "College Companion",
+    "name": "companion",
     "slug": "companion",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "scheme": "myapp",
+    "scheme": "companion",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {

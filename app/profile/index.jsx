@@ -6,11 +6,19 @@ import {
     StyleSheet, 
     ScrollView, 
     Platform, 
-    KeyboardAvoidingView 
+    KeyboardAvoidingView,
+    TouchableOpacity,
+    SafeAreaView,
+    Dimensions 
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import { useAuth } from '../../context/auth';
+import { useRouter } from 'expo-router';
+
 
 const Profile = () => {
+    const { signOut } = useAuth();
+    const router = useRouter();
     const studentInfo = {
         name: 'Suman Pradhan',
         rollNumber: '21CS123',
@@ -31,6 +39,11 @@ const Profile = () => {
             </View>
         </View>
     );
+
+    const handleLogout = () => {
+        signOut();
+        router.replace('/login');
+    };
 
     return (
         <KeyboardAvoidingView 
@@ -61,6 +74,13 @@ const Profile = () => {
                     <InfoRow icon="check-circle" label="Attendance" value={studentInfo.attendance} />
                     <InfoRow icon="grade" label="CGPA" value={studentInfo.cgpa} />
                 </View>
+                <TouchableOpacity 
+                    style={styles.logoutButton}
+                    onPress={handleLogout}
+                >
+                    <MaterialIcons name="logout" size={24} color="#fff" />
+                    <Text style={styles.logoutText}>Logout</Text>
+                </TouchableOpacity>
             </ScrollView>
         </KeyboardAvoidingView>
     );
@@ -70,12 +90,17 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
+        paddingTop: Platform.OS === 'ios' ? 0 : 0, // Remove extra padding
+        paddingBottom: 60, // Space for bottom nav
+    },
+    contentContainer: {
+        padding: 20,
     },
     scrollView: {
         flex: 1,
     },
     scrollViewContent: {
-        paddingBottom: Platform.OS === 'ios' ? 120 : 90, // Increased padding
+        paddingBottom: Platform.OS === 'ios' ? 180 : 150, // Increased padding for bottom nav
     },
     header: {
         alignItems: 'center',
@@ -138,6 +163,23 @@ const styles = StyleSheet.create({
         color: '#333',
         marginTop: 4,
     },
+    logoutButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#FF3B30',
+        padding: 16,
+        borderRadius: 12,
+        marginHorizontal: 20,
+        marginTop: 20,
+        marginBottom: 30,
+    },
+    logoutText: {
+        color: '#fff',
+        fontSize: 18,
+        fontWeight: '600',
+        marginLeft: 8,
+    }
 });
 
 export default Profile;
