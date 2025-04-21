@@ -128,7 +128,7 @@ export default function TeacherDashboard() {
             icon: 'assignment',
             color: '#FFC107',
             backgroundColor: '#FFF8E1',
-            onPress: () => router.push('/teacher/assignments')
+            onPress: () => router.push('/teacher/components/assignments')
         },
         {
             title: 'Student Reports',
@@ -172,6 +172,9 @@ export default function TeacherDashboard() {
                 style={styles.header}
             >
                 <View style={styles.headerContent}>
+                    <TouchableOpacity onPress={handleLogout} style={styles.backButton}>
+                        <MaterialIcons name="arrow-back" size={24} color="#fff" />
+                    </TouchableOpacity>
                     <View style={styles.profileInfo}>
                         <Image
                             source={{ uri: 'https://ui-avatars.com/api/?name=Teacher&background=ffffff&color=1a237e&bold=true' }}
@@ -297,6 +300,11 @@ const styles = StyleSheet.create({
     },
     headerContent: {
         paddingHorizontal: 20,
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    backButton: {
+        marginRight: 15,
     },
     profileInfo: {
         flexDirection: 'row',

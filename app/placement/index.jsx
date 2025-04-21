@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Platform } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 
 export default function PlacementScreen() {
+  const router = useRouter();
   const placementStats = {
     totalPlaced: 856,
     highestPackage: '42.5 LPA',
@@ -48,6 +50,14 @@ export default function PlacementScreen() {
       year: 'numeric',
       month: 'short',
       day: 'numeric'
+    });
+  };
+
+  // Navigate to application form with drive details
+  const handleApplyNow = (drive) => {
+    router.push({
+      pathname: '/placement/apply',
+      params: { driveId: drive.id, company: drive.company, role: drive.role }
     });
   };
 
@@ -113,7 +123,7 @@ export default function PlacementScreen() {
 
               <Text style={styles.eligibility}>Eligibility: {drive.eligibility}</Text>
 
-              <TouchableOpacity style={styles.applyButton}>
+              <TouchableOpacity style={styles.applyButton} onPress={() => handleApplyNow(drive)}>
                 <Text style={styles.applyButtonText}>Apply Now</Text>
               </TouchableOpacity>
             </View>

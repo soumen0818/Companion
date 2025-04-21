@@ -12,6 +12,7 @@ import {
 import { MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import * as DocumentPicker from 'expo-document-picker';
 
 export default function AssignmentCreate() {
     const router = useRouter();
@@ -20,6 +21,7 @@ export default function AssignmentCreate() {
     const [selectedClass, setSelectedClass] = useState('');
     const [dueDate, setDueDate] = useState(new Date());
     const [showDatePicker, setShowDatePicker] = useState(false);
+    const [pdf, setPdf] = useState(null);
 
     const classes = [
         'B.Tech CSE 2nd Year',
@@ -27,9 +29,22 @@ export default function AssignmentCreate() {
         'B.Tech CSE 4th Year'
     ];
 
+    const handlePdfUpload = async () => {
+        try {
+            const result = await DocumentPicker.getDocumentAsync({ type: 'application/pdf' });
+            if (result.type === 'success') {
+                // ensure name is available, fallback to URI basename
+                const fileName = result.name || result.uri.split('/').pop();
+                setPdf({ uri: result.uri, name: fileName });
+            }
+        } catch (error) {
+            Alert.alert('Error', 'Unable to pick document: ' + error.message);
+        }
+    };
+
     const handleSubmit = () => {
-        if (!title || !description || !selectedClass) {
-            Alert.alert('Error', 'Please fill all the required fields');
+        if (!title || !description || !selectedClass || !pdf?.uri) {
+            Alert.alert('Error', 'Please fill all the required fields including PDF');
             return;
         }
 
@@ -126,6 +141,14 @@ export default function AssignmentCreate() {
                         minimumDate={new Date()}
                     />
                 )}
+
+                <View style={styles.formGroup}>
+                    <Text style={styles.label}>Assignment PDF</Text>
+                    <TouchableOpacity style={styles.dateButton} onPress={handlePdfUpload}>
+                        <MaterialIcons name="attach-file" size={24} color="#4A90E2" />
+                        <Text style={styles.dateText}>{pdf?.name ?? 'Upload PDF'}</Text>
+                    </TouchableOpacity>
+                </View>
 
                 <TouchableOpacity 
                     style={styles.submitButton}

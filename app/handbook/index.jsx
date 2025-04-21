@@ -1,182 +1,226 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useState, useMemo } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking, Alert, Platform } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 
-export default function HandbookScreen() {
-  const sections = [
-    {
-      title: 'Subject Notes',
-      icon: 'menu-book',
-      items: [
-        {
-          name: 'Data Structures',
-          type: 'PDF',
-          size: '2.5 MB',
-          lastUpdated: '2024-03-20'
-        },
-        {
-          name: 'Database Management',
-          type: 'PDF',
-          size: '3.1 MB',
-          lastUpdated: '2024-03-18'
-        },
-        {
-          name: 'Computer Networks',
-          type: 'PDF',
-          size: '4.2 MB',
-          lastUpdated: '2024-03-15'
-        }
-      ]
-    },
-    {
-      title: 'Academic Rules',
-      icon: 'school',
-      items: ['Attendance Policy', 'Examination Rules', 'Grading System']
-    },
-    {
-      title: 'Campus Guidelines',
-      icon: 'location-city',
-      items: ['Dress Code', 'Library Rules', 'Lab Regulations']
-    },
-    {
-      title: 'Student Services',
-      icon: 'people',
-      items: ['Counseling', 'Health Services', 'Sports Facilities']
-    },
-    {
-      title: 'Important Contacts',
-      icon: 'contact-phone',
-      items: ['Emergency Numbers', 'Department Contacts', 'Administration']
-    }
-  ];
+// Sample data - Replace with actual data fetching logic
+const allHandbooks = [
+  {
+    subject: 'Data Structures',
+    name: 'DS Handbook Vol. 1',
+    type: 'PDF',
+    size: '2.5 MB',
+    lastUpdated: '2024-03-20',
+    url: 'https://example.com/pdfs/data-structures-v1.pdf' // Placeholder URL
+  },
+  {
+    subject: 'Data Structures',
+    name: 'DS Algorithms Guide',
+    type: 'PDF',
+    size: '1.8 MB',
+    lastUpdated: '2024-03-15',
+    url: 'https://example.com/pdfs/data-structures-algo.pdf' // Placeholder URL
+  },
+  {
+    subject: 'Database Management',
+    name: 'DBMS Concepts',
+    type: 'PDF',
+    size: '3.1 MB',
+    lastUpdated: '2024-03-18',
+    url: 'https://example.com/pdfs/dbms-concepts.pdf' // Placeholder URL
+  },
+  {
+    subject: 'Computer Networks',
+    name: 'Networking Fundamentals',
+    type: 'PDF',
+    size: '4.2 MB',
+    lastUpdated: '2024-03-15',
+    url: 'https://example.com/pdfs/cn-fundamentals.pdf' // Placeholder URL
+  },
+  // Add more handbooks for different subjects
+];
 
-  const renderItem = (item, itemIndex, sectionTitle) => {
-    if (sectionTitle === 'Subject Notes') {
-      return (
-        <TouchableOpacity key={itemIndex} style={styles.noteContainer}>
-          <View style={styles.noteInfo}>
-            <MaterialIcons name="description" size={24} color="#007AFF" />
-            <View style={styles.noteDetails}>
-              <Text style={styles.noteName}>{item.name}</Text>
-              <Text style={styles.noteMetadata}>
-                {item.type} • {item.size} • Updated {item.lastUpdated}
-              </Text>
-            </View>
-          </View>
-          <MaterialIcons name="download" size={24} color="#666" />
-        </TouchableOpacity>
-      );
+export default function HandbookScreen() {
+  // Extract unique subjects from the handbook data
+  const subjects = useMemo(() => [
+    ...new Set(allHandbooks.map(item => item.subject))
+  ], []);
+
+  const [selectedSubject, setSelectedSubject] = useState(subjects[0] || null); // Default to the first subject
+
+  // Filter handbooks based on the selected subject
+  const filteredHandbooks = useMemo(() =>
+    allHandbooks.filter(item => item.subject === selectedSubject)
+  , [selectedSubject]);
+
+  const handleOpenPdf = async (url) => {
+    const supported = await Linking.canOpenURL(url);
+
+    if (supported) {
+      await Linking.openURL(url);
+    } else {
+      Alert.alert(`Don't know how to open this URL: ${url}`);
     }
-    
+  };
+
+  const renderNoteItem = (item, itemIndex) => {
     return (
-      <TouchableOpacity key={itemIndex} style={styles.itemContainer}>
-        <Text style={styles.itemText}>{item}</Text>
-        <MaterialIcons name="chevron-right" size={24} color="#666" />
+      <TouchableOpacity
+        key={itemIndex}
+        style={styles.noteContainer}
+        onPress={() => handleOpenPdf(item.url)}
+      >
+        <View style={styles.noteInfo}>
+          <MaterialIcons name="description" size={24} color="#007AFF" />
+          <View style={styles.noteDetails}>
+            <Text style={styles.noteName}>{item.name}</Text>
+            <Text style={styles.noteMetadata}>
+              {item.type} • {item.size} • Updated {item.lastUpdated}
+            </Text>
+          </View>
+        </View>
+        <MaterialIcons name="download" size={24} color="#666" />
       </TouchableOpacity>
     );
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Student Handbook</Text>
-        <Text style={styles.headerSubtitle}>2024-25 Academic Year</Text>
       </View>
 
-      {sections.map((section, index) => (
-        <View key={index} style={styles.sectionContainer}>
-          <View style={styles.sectionHeader}>
-            <MaterialIcons name={section.icon} size={24} color="#007AFF" />
-            <Text style={styles.sectionTitle}>{section.title}</Text>
-          </View>
-          {section.items.map((item, itemIndex) => 
-            renderItem(item, itemIndex, section.title)
-          )}
-        </View>
-      ))}
-    </ScrollView>
+      {/* Subject Selector */}
+      <View style={styles.selectorContainer}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.selectorScroll}>
+          {subjects.map((subject, index) => (
+            <TouchableOpacity
+              key={index}
+              style={[
+                styles.subjectChip,
+                selectedSubject === subject && styles.selectedSubjectChip
+              ]}
+              onPress={() => setSelectedSubject(subject)}
+            >
+              <Text style={[
+                styles.subjectChipText,
+                selectedSubject === subject && styles.selectedSubjectChipText
+              ]}>
+                {subject}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
+
+      {/* Handbooks List */}
+      <ScrollView style={styles.listContainer}>
+        {selectedSubject ? (
+          filteredHandbooks.length > 0 ? (
+            filteredHandbooks.map((item, itemIndex) =>
+              renderNoteItem(item, itemIndex)
+            )
+          ) : (
+            <Text style={styles.noDataText}>No handbooks found for {selectedSubject}.</Text>
+          )
+        ) : (
+          <Text style={styles.noDataText}>Please select a subject.</Text>
+        )}
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#f5f5f5',
   },
   header: {
     padding: 20,
+    paddingTop: Platform.OS === 'ios' ? 50 : 20,
     backgroundColor: '#007AFF',
+    borderBottomLeftRadius: 15,
+    borderBottomRightRadius: 15,
   },
   headerTitle: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#fff',
+    textAlign: 'center',
   },
-  headerSubtitle: {
-    fontSize: 16,
-    color: '#fff',
-    opacity: 0.9,
-    marginTop: 5,
-  },
-  sectionContainer: {
-    padding: 15,
+  selectorContainer: {
+    paddingVertical: 10,
+    backgroundColor: '#fff',
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
-    backgroundColor: '#fff',
   },
-  sectionHeader: {
-    flexDirection: 'row',
+  selectorScroll: {
+    paddingHorizontal: 15,
     alignItems: 'center',
-    marginBottom: 15,
-    paddingHorizontal: 5,
   },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginLeft: 10,
-    color: '#333',
+  subjectChip: {
+    paddingVertical: 8,
+    paddingHorizontal: 15,
+    borderRadius: 20,
+    backgroundColor: '#e9ecef',
+    marginRight: 10,
+    borderWidth: 1,
+    borderColor: '#dee2e6',
   },
-  itemContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 10,
-    backgroundColor: '#f8f9fa',
-    borderRadius: 8,
-    marginBottom: 8,
+  selectedSubjectChip: {
+    backgroundColor: '#007AFF',
+    borderColor: '#0056b3',
   },
-  itemText: {
-    fontSize: 16,
-    color: '#444',
+  subjectChipText: {
+    fontSize: 14,
+    color: '#495057',
+    fontWeight: '500',
+  },
+  selectedSubjectChipText: {
+    color: '#fff',
+  },
+  listContainer: {
+    flex: 1,
+    padding: 15,
   },
   noteContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 15,
-    backgroundColor: '#f8f9fa',
-    borderRadius: 8,
-    marginBottom: 8,
+    padding: 15,
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    marginBottom: 12,
+    elevation: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
   },
   noteInfo: {
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
+    marginRight: 10,
   },
   noteDetails: {
-    marginLeft: 12,
+    marginLeft: 15, // Increased spacing from icon
     flex: 1,
   },
   noteName: {
     fontSize: 16,
-    fontWeight: '500',
-    color: '#333',
-    marginBottom: 4,
+    fontWeight: '600', // Slightly bolder
+    color: '#343a40',
+    marginBottom: 5,
   },
   noteMetadata: {
     fontSize: 12,
-    color: '#666',
+    color: '#6c757d',
   },
-});
+  noDataText: {
+    textAlign: 'center',
+    marginTop: 30,
+    fontSize: 16,
+    color: '#6c757d',
+  },
+}); // Ensure closing brace and parenthesis are correct

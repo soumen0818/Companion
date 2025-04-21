@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Platform } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Platform, Linking } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 
 export default function PaymentScreen() {
   const [selectedPayment, setSelectedPayment] = useState(null);
+  const router = useRouter();
 
 const feeDetails = [
     {
@@ -31,11 +33,11 @@ const feeDetails = [
 
 const handlePayNow = () => {
     if (selectedPayment === 1) {
-        alert('Redirecting to Debit/Credit Card Payment');
-        // Add logic to handle Debit/Credit Card payment
+      router.push('/payment/credit-card');
+      return;
     } else if (selectedPayment === 2) {
-        alert('Opening UPI App');
-        // Add logic to open UPI app
+        const upiUrl = `upi://pay?pa=example@upi&pn=CompanionApp&am=${totalAmount}&cu=INR`;
+        Linking.openURL(upiUrl).catch(() => alert('No UPI app found'));
     } else if (selectedPayment === 3) {
         alert('Redirecting to Net Banking');
         // Add logic to handle Net Banking payment
@@ -132,7 +134,7 @@ const handlePayNow = () => {
           ))}
         </View>
 
-        <TouchableOpacity style={styles.payButton}>
+        <TouchableOpacity style={styles.payButton} onPress={handlePayNow}>
           <Text style={styles.payButtonText}>Pay Now</Text>
         </TouchableOpacity>
       </ScrollView>

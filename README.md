@@ -1,50 +1,90 @@
-# Welcome to your Expo app 👋
+# 🎓 College Companion App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+An all-in-one mobile solution for students and parents, built using **React Native** for the frontend and **Express.js + MongoDB** for the backend.  
+This app serves as a digital bridge between students, their academic data, and their guardians – enabling real-time access to attendance, fees, performance, and more.
 
-## Get started
+---
 
-1. Install dependencies
+## 📱 Features
 
-   ```bash
-   npm install
-   ```
+### 👩‍🎓 Student Dashboard
+- 📚 **LMS (Learning Management System)**
+  - Daily attendance view
+  - Total attendance count
+- 💸 **Fees Section**
+  - Fee status & payment history
+- 📖 **Digital Handbook**
+  - Institution rules, guidelines, and important resources
+- 🧑‍💼 **Profile**
+  - View and manage personal info
+- 🤖 **AI Chatbot Assistant**
+  - Get answers related to academics, campus info, deadlines, and more
 
-2. Start the app
+---
 
-   ```bash
-    npx expo start
-   ```
+### 👨‍👩‍👧‍👦 **Parents' Access (Highlighted Feature)**
+Parents have their own secure login and can:
+- ✅ View their child’s **daily and total attendance**
+- 📊 Access **fee history and payment status**
+- 🗣️ Read **teacher feedback** about their child
+- 🧾 View **semester-wise academic performance and marks**
 
-In the output, you'll find options to open the app in a
+> 🔐 Parents' access is **completely separate** from student accounts to ensure data privacy and proper authorization.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+---
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## 🛠️ Tech Stack
 
-## Get a fresh project
+| Layer      | Technology     |
+|------------|----------------|
+| Frontend   | React Native   |
+| Backend    | Express.js     |
+| Database   | MongoDB        |
+| Auth       | JWT, bcrypt    |
+| AI Chatbot | OpenAI / Dialogflow |
+| State Management | Context API / Redux |
+| API Calls  | Axios          |
 
-When you're ready, run:
+---
 
-```bash
-npm run reset-project
-```
+## 🧩 Folder Structure
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+frontend/src/
+│── components/      
+│   ├── AttendanceCard.js   # Reusable component for attendance display
+│   ├── FeesCard.js         # Fee history card
+│   ├── Chatbot.js          # AI chatbot UI
+│
+│── screens/      
+│   ├── LoginScreen.js      # User authentication screen
+│   ├── StudentDashboard.js # Student homepage (LMS, fees, profile)
+│   ├── ParentDashboard.js  # Parent homepage (student data)
+│   ├── AttendanceScreen.js # Daily attendance
+│   ├── FeesScreen.js       # Fee history
+│   ├── FeedbackScreen.js   # Teacher feedback
+│   ├── MarksScreen.js      # Semester marks
+│   ├── ChatbotScreen.js    # AI chatbot
+│
+│── navigation/
+│   ├── AppNavigator.js     # Stack & Tab navigation
+│
+│── context/      
+│   ├── AuthContext.js      # Handles global authentication state
+│
+│── utils/
+│   ├── api.js              # Axios setup for API calls
+│   ├── helpers.js          # Utility functions
+│
+│── assets/                 # Static assets (images, icons)
+│
+│── App.js                  # Main entry point
+│── index.js                # Root file
+│── package.json            # Dependencies & metadata
+│── babel.config.js         # Babel configuration
 
-## Learn more
+📬 Contact
+Developed by Soumen Das
+📧 Email: dassoumen0818@gmail.com
+🌐 LinkedIn: https://www.linkedin.com/in/soumen-das-76b867218/
+🚀 GitHub: https://github.com/soumen0818
 
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
